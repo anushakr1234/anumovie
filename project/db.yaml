@@ -1,0 +1,41 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "anumovie"
+  namespace: "default"
+  labels:
+    app: "anumovie"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "anumovie"
+  template:
+    metadata:
+      labels:
+        app: "anumovie"
+    spec:
+      containers:
+      - name: "anumovie-sha256-1"
+        image: "gcr.io/gcpdemo-334906/github.com/anushakr1234/anumovie@sha256:4dea5020804e9cb40322420f98ca6542b4d3c5e8e52d27142e8956931fe93288"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "anumovie-hpa-h9es"
+  namespace: "default"
+  labels:
+    app: "anumovie"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "anumovie"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
